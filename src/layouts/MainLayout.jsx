@@ -26,7 +26,7 @@ const MainLayout = () => {
                   <Layers className="text-white w-5 h-5" />
                </div>
                <span className="text-xl font-bold bg-gradient-to-r from-indigo-700 to-indigo-500 bg-clip-text text-transparent hidden md:block">
-                  NexusCore
+                  MasterHub
                </span>
             </div>
 
