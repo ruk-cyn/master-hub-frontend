@@ -1,23 +1,18 @@
 import api from './api';
 
 export const masterDataService = {
-  // ฟังก์ชันดึงข้อมูลตามประเภท (domain)
-  // ตัวอย่าง: getData('product') -> GET /api/master/products/
   getData: async (domain, params = {}) => {
     try {
-      // Mapping ชื่อ Domain ให้ตรงกับ URL ของ Backend Django
-      // คุณอาจต้องแก้ URL ตรงนี้ให้ตรงกับที่ Backend ตั้งไว้
       const endpoints = {
-        'product': '/product/skus/',       // หรือ /api/products/
-        'customer': '/core/customers/',    // หรือ /api/customers/
-        'company': '/core/companies/',     // ดึงข้อมูลบริษัท
-        'location': '/core/locations/',
-        'brand': '/product/brands/',       // ดึงยี่ห้อ
-        'category': '/product/categorys/', // ดึงหมวดหมู่
+        'product': '/product/skus/',
+        'customer': '/core/customers/',
+        'brands': '/product/brands/',
+        'categories': '/product/categories/', // แก้เป็น categories และใส่ URL ใหม่
+        'names': '/product/names/', 
+        'skus': '/product/skus/'
       };
 
       const url = endpoints[domain] || `/master/${domain}/`;
-      
       const response = await api.get(url, { params });
       return response.data;
     } catch (error) {
@@ -26,15 +21,33 @@ export const masterDataService = {
     }
   },
 
-  // ฟังก์ชันสร้างข้อมูลใหม่ (Create)
   createData: async (domain, data) => {
     try {
       const endpoints = {
         'product': '/product/skus/',
-        // ... เพิ่มตามต้องการ
+        'brands': '/product/brands/',
+        'categories': '/product/categories/', // เพิ่ม
+        'names': '/product/names/',
       };
-      const url = endpoints[domain];
+      const url = endpoints[domain] || `/master/${domain}/`;
       const response = await api.post(url, data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  deleteData: async (domain, id) => {
+    try {
+      const endpoints = {
+        'product': '/product/skus/',
+        'brands': '/product/brands/',
+        'categories': '/product/categories/', // เพิ่ม
+        'names': '/product/names/',
+      };
+      const baseUrl = endpoints[domain] || `/master/${domain}/`;
+      const url = `${baseUrl}${id}/`; 
+      const response = await api.delete(url);
       return response.data;
     } catch (error) {
       throw error;
