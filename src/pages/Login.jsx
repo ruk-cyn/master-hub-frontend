@@ -1,32 +1,31 @@
 import React, { useState } from 'react';
 import { Mail, Lock, ArrowRight, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '../services/auth'; // เรียกใช้ Service
+import { authService } from '../services/auth';
 
 const Login = () => {
+  // สร้าง State เก็บค่าที่พิมพ์
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // สถานะการโหลด
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    
-    // 1. เริ่มหมุน และล็อคปุ่ม
     setIsLoading(true);
 
     try {
-      // 2. เรียก Login (ตอนนี้ใช้ loginDev ตามที่คุยกัน)
-      // ใส่ delay นิดหน่อยเพื่อให้เห็นวงกลมหมุนๆ (UX) ถ้า API เร็วจัด
-      // await new Promise(r => setTimeout(r, 800)); 
+      // เรียกใช้ฟังก์ชัน login ตัวใหม่ ส่งค่าที่พิมพ์ไปให้
+      await authService.login(username, password);
       
-      await authService.loginDev(); 
-      
-      // 3. ถ้าสำเร็จ ไปหน้า Dashboard
+      // ถ้าผ่าน ให้ไปหน้า Dashboard
       navigate('/dashboard');
     } catch (err) {
       console.error(err);
-      alert("เข้าสู่ระบบไม่สำเร็จ กรุณาตรวจสอบ Server");
-      setIsLoading(false); // หยุดหมุนถ้า error
+      alert("เข้าสู่ระบบไม่สำเร็จ! กรุณาตรวจสอบ Email หรือ Password");
+      setIsLoading(false);
     }
   };
 
@@ -34,7 +33,7 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 font-sans">
       <div className="flex w-full max-w-5xl shadow-2xl rounded-2xl overflow-hidden bg-white mx-4 lg:mx-0 h-[600px]">
         
-        {/* ส่วนรูปภาพ (ซ้าย) */}
+        {/* รูปภาพ (ซ้าย) */}
         <div 
           className="hidden lg:block w-1/2 bg-cover bg-center relative"
           style={{ backgroundImage: "url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop')" }}
@@ -45,23 +44,27 @@ const Login = () => {
           </div>
         </div>
 
-        {/* ส่วนฟอร์ม (ขวา) */}
+        {/* ฟอร์ม (ขวา) */}
         <div className="w-full lg:w-1/2 p-8 lg:p-12 flex flex-col justify-center">
           <div className="max-w-md mx-auto w-full">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">ยินดีต้อนรับ</h1>
             <p className="text-gray-500 mb-8">กรุณากรอกข้อมูลเพื่อเข้าสู่ระบบ</p>
 
             <form className="space-y-6" onSubmit={handleLogin}>
-              {/* Email Input */}
+              
+              {/* Email / Username Input */}
               <div>
-                <label className="text-sm font-medium text-gray-700 block mb-2">อีเมล</label>
+                <label className="text-sm font-medium text-gray-700 block mb-2">Username / Email</label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                   <input 
-                    type="email" 
-                    placeholder="admin@masterhub.com" 
+                    type="text" 
+                    placeholder="username" 
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                    disabled={isLoading} // ล็อคตอนโหลด
+                    disabled={isLoading}
+                    value={username} // ผูกค่ากับ State
+                    onChange={(e) => setUsername(e.target.value)} // อัปเดตค่าเมื่อพิมพ์
+                    required
                   />
                 </div>
               </div>
@@ -75,7 +78,10 @@ const Login = () => {
                     type={showPassword ? "text" : "password"} 
                     placeholder="••••••••" 
                     className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                    disabled={isLoading} // ล็อคตอนโหลด
+                    disabled={isLoading}
+                    value={password} // ผูกค่ากับ State
+                    onChange={(e) => setPassword(e.target.value)} // อัปเดตค่าเมื่อพิมพ์
+                    required
                   />
                   <button 
                     type="button" 

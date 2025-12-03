@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+/* --- เพิ่มโค้ดชุดนี้ต่อท้ายครับ --- */
+
+/* ซ่อนปุ่มลูกตาของ Browser (Edge/Chrome) */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+/* ซ่อนของ Webkit (Chrome/Safari) */
+input[type="password"]::-webkit-password-reveal-button {
+  display: none;
+  -webkit-appearance: none;
+}
