@@ -7,9 +7,10 @@ export const masterDataService = {
         'product': '/product/skus/',
         'customer': '/core/customers/',
         'brands': '/product/brands/',
-        'categories': '/product/categories/', // แก้เป็น categories และใส่ URL ใหม่
+        'categories': '/product/categories/',
         'names': '/product/names/', 
-        'skus': '/product/skus/'
+        'skus': '/product/skus/',
+        'serials': '/product/serials/' // [เพิ่มใหม่]
       };
 
       const url = endpoints[domain] || `/master/${domain}/`;
@@ -26,8 +27,10 @@ export const masterDataService = {
       const endpoints = {
         'product': '/product/skus/',
         'brands': '/product/brands/',
-        'categories': '/product/categories/', // เพิ่ม
+        'categories': '/product/categories/',
         'names': '/product/names/',
+        'skus': '/product/skus/',
+        'serials': '/product/serials/', // [เพิ่มใหม่]
       };
       const url = endpoints[domain] || `/master/${domain}/`;
       const response = await api.post(url, data);
@@ -42,8 +45,10 @@ export const masterDataService = {
       const endpoints = {
         'product': '/product/skus/',
         'brands': '/product/brands/',
-        'categories': '/product/categories/', // เพิ่ม
+        'categories': '/product/categories/',
         'names': '/product/names/',
+        'skus': '/product/skus/',
+        'serials': '/product/serials/', // [เพิ่มใหม่]
       };
       const baseUrl = endpoints[domain] || `/master/${domain}/`;
       const url = `${baseUrl}${id}/`; 

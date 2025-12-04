@@ -2,29 +2,54 @@ import axios from 'axios';
 
 // 1. ตั้งค่า Base URL
 const api = axios.create({
-  baseURL: 'https://api-test.cynlive.com/api', // ไม่ต้องใส่ /token/ หรือ /table/ ตรงนี้ เอาแค่ path หลัก
+  baseURL: 'https://api-test.cynlive.com/api',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// 2. สร้าง Interceptor (ด่านตรวจ)
-// ทุกครั้งที่จะยิง Request ออกไป ให้ทำฟังก์ชันนี้ก่อน
+// 2. Request Interceptor (ด่านขาออก: แนบ Token)
 api.interceptors.request.use(
   (config) => {
-    // ดึง Token จาก LocalStorage
     const token = localStorage.getItem('access_token');
-    
-    // ถ้ามี Token ให้ใส่เข้าไปใน Header: Authorization: Bearer xxxxx
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
     return config;
   },
   (error) => {
     return Promise.reject(error);
   }
 );
+
+// --- [เพิ่มส่วนนี้ครับ] ---
+// 3. Response Interceptor (ด่านขาเข้า: ดักจับ Error 401)
+api.interceptors.response.use(
+  (response) => {
+    // ถ้า API ตอบกลับมาปกติ (200, 201) ให้ผ่านไปได้เลย
+    return response;
+  },
+  (error) => {
+    // ถ้ามี Error เกิดขึ้น
+    if (error.response && error.response.status === 401) {
+      // ตรวจสอบว่าเป็น 401 Unauthorized หรือไม่
+      console.warn('Session Expired: Logging out...');
+
+      // 1. ล้าง Token ออกจากเครื่อง
+      localStorage.clear(); 
+      // หรือถ้าอยากลบเฉพาะตัว: 
+      // localStorage.removeItem('access_token');
+      // localStorage.removeItem('refresh_token');
+
+      // 2. บังคับ Redirect ไปหน้า Login (/)
+      // ใช้ window.location เพื่อให้หน้าเว็บโหลดใหม่และเคลียร์ State ทั้งหมด
+      window.location.href = '/';
+    }
+
+    // ส่ง Error ต่อไปให้ Component เผื่อจะจัดการอย่างอื่น (เช่น ปิด Loading)
+    return Promise.reject(error);
+  }
+);
+// -----------------------
 
 export default api;
